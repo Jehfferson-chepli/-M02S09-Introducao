@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
@@ -10,6 +10,12 @@ function App() {
   const [postDate, setPostDate] = useState('');
   const [category, setCategory] = useState('');
   const [errors, setErrors] = useState({});
+  const [totalPosts, setTotalPosts] = useState(0);
+
+  useEffect(() => {
+    const posts = getPostsFromStorage();
+    setTotalPosts(posts.length);
+  }, []);
 
   const getPostsFromStorage = () => {
     try {
@@ -26,15 +32,14 @@ function App() {
       const currentPosts = getPostsFromStorage();
       const updatedPosts = [...currentPosts, newPost];
       localStorage.setItem('blogPosts', JSON.stringify(updatedPosts));
+      
+      setTotalPosts(updatedPosts.length);
+      
       return true;
     } catch (error) {
       console.error('Erro ao salvar post no localStorage:', error);
       return false;
     }
-  };
-
-  const countPosts = () => {
-    return getPostsFromStorage().length;
   };
 
   const validateForm = () => {
@@ -114,7 +119,7 @@ function App() {
     <div className="app">
       <header className="header">
         <h1>Painel de Gerenciamento</h1>
-        <p>Atualmente, você tem <strong>{countPosts()} posts</strong> cadastrados</p>
+        <p>Atualmente, você tem <strong>{totalPosts} posts</strong> cadastrados</p>
       </header>
 
       <main className="main-content">
