@@ -11,6 +11,32 @@ function App() {
   const [category, setCategory] = useState('');
   const [errors, setErrors] = useState({});
 
+  const getPostsFromStorage = () => {
+    try {
+      const posts = localStorage.getItem('blogPosts');
+      return posts ? JSON.parse(posts) : [];
+    } catch (error) {
+      console.error('Erro ao ler posts do localStorage:', error);
+      return [];
+    }
+  };
+
+  const savePostToStorage = (newPost) => {
+    try {
+      const currentPosts = getPostsFromStorage();
+      const updatedPosts = [...currentPosts, newPost];
+      localStorage.setItem('blogPosts', JSON.stringify(updatedPosts));
+      return true;
+    } catch (error) {
+      console.error('Erro ao salvar post no localStorage:', error);
+      return false;
+    }
+  };
+
+  const countPosts = () => {
+    return getPostsFromStorage().length;
+  };
+
   const validateForm = () => {
     const newErrors = {};
     
@@ -42,19 +68,36 @@ function App() {
     e.preventDefault();
     
     if (validateForm()) {
-      console.log({ title, description, imageUrl, postDate, category });
+      const newPost = {
+        id: Date.now(),
+        title: title.trim(),
+        description: description.trim(),
+        imageUrl: imageUrl.trim(),
+        postDate,
+        category,
+        createdAt: new Date().toISOString()
+      };
       
-      toast.success('Post criado com sucesso!', {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      const saved = savePostToStorage(newPost);
       
-      setTitle('');
-      setDescription('');
-      setImageUrl('');
-      setPostDate('');
-      setCategory('');
-      setErrors({});
+      if (saved) {
+        toast.success('Post criado com sucesso!', {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        
+        setTitle('');
+        setDescription('');
+        setImageUrl('');
+        setPostDate('');
+        setCategory('');
+        setErrors({});
+      } else {
+        toast.error('Erro ao salvar o post. Tente novamente.', {
+          position: "top-right",
+          autoClose: 4000,
+        });
+      }
     } else {
       toast.error('Por favor, corrija os erros no formulário.', {
         position: "top-right",
@@ -71,7 +114,7 @@ function App() {
     <div className="app">
       <header className="header">
         <h1>Painel de Gerenciamento</h1>
-        <p>Atualmente, você tem <strong>14 posts</strong> cadastrados</p>
+        <p>Atualmente, você tem <strong>{countPosts()} posts</strong> cadastrados</p>
       </header>
 
       <main className="main-content">
