@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Post from './Post';
 import './PostsList.css';
 
 function PostsList() {
@@ -17,22 +18,12 @@ function PostsList() {
     };
 
     loadPosts();
-
-    const handleStorageChange = () => {
-      loadPosts();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('storage', loadPosts);
     
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('storage', loadPosts);
     };
   }, []);
-
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('pt-BR', options);
-  };
 
   if (posts.length === 0) {
     return (
@@ -47,33 +38,12 @@ function PostsList() {
     <div className="posts-list-container">
       <h2>Lista de Posts ({posts.length})</h2>
       
-      <div className="posts-grid">
+      <div className="posts-list">
         {posts.map((post) => (
-          <div key={post.id} className="post-card">
-            <div className="post-image">
-              <img 
-                src={post.capa} 
-                alt={post.titulo}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'block';
-                }}
-              />
-              <div className="image-placeholder" style={{display: 'none'}}>
-                📷 Imagem não disponível
-              </div>
-            </div>
-            
-            <div className="post-content">
-              <span className="post-category">{post.tipo}</span>
-              <h3 className="post-title">{post.titulo}</h3>
-              <p className="post-description">{post.descricao}</p>
-              
-              <div className="post-meta">
-                <span className="post-date">{formatDate(post.data)}</span>
-              </div>
-            </div>
-          </div>
+          <Post 
+            key={post.id} 
+            post={post} 
+          />
         ))}
       </div>
     </div>
