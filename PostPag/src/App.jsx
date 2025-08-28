@@ -4,14 +4,16 @@ import './App.css';
 function App() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica para enviar os dados do formulário
-    console.log({ title, description });
-    // Limpar os campos após o envio
+    
+    console.log({ title, description, imageUrl });
+    
     setTitle('');
     setDescription('');
+    setImageUrl('');
   };
 
   return (
@@ -32,7 +34,7 @@ function App() {
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Título"
+              placeholder="Título do post"
               required
             />
           </div>
@@ -43,9 +45,20 @@ function App() {
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Descrição"
+              placeholder="Descrição do post"
               rows={5}
               required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="imageUrl">URL da Imagem de Capa</label>
+            <input
+              type="url"
+              id="imageUrl"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://exemplo.com/imagem.jpg"
             />
           </div>
 

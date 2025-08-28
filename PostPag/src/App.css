@@ -84,6 +84,24 @@ body {
   color: #bbb;
 }
 
+.image-preview {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.image-preview p {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
 .submit-button {
   background-color: #3498db;
   color: white;
