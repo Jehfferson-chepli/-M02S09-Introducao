@@ -6,6 +6,7 @@ function App() {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [postDate, setPostDate] = useState('');
+  const [category, setCategory] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,12 +14,14 @@ function App() {
       title, 
       description, 
       imageUrl, 
-      postDate 
+      postDate,
+      category
     });
     setTitle('');
     setDescription('');
     setImageUrl('');
     setPostDate('');
+    setCategory('');
   };
 
   return (
@@ -54,6 +57,22 @@ function App() {
               rows={5}
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="category">Categoria</label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+            >
+              <option value="">Selecione uma categoria</option>
+              <option value="artigo">Artigo</option>
+              <option value="noticia">Notícia</option>
+              <option value="tutorial">Tutorial</option>
+              <option value="entrevista">Entrevista</option>
+            </select>
           </div>
 
           <div className="form-group">
