@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 function App() {
@@ -7,65 +9,117 @@ function App() {
   const [imageUrl, setImageUrl] = useState('');
   const [postDate, setPostDate] = useState('');
   const [category, setCategory] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!title.trim()) newErrors.title = 'Título é obrigatório';
+    if (!description.trim()) newErrors.description = 'Descrição é obrigatória';
+    if (!category) newErrors.category = 'Categoria é obrigatória';
+    
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      newErrors.imageUrl = 'URL da imagem deve começar com http';
+    }
+    
+    if (!postDate) {
+      newErrors.postDate = 'Data é obrigatória';
+    } else {
+      const selectedDate = new Date(postDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        newErrors.postDate = 'A data deve ser hoje ou uma data futura';
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ 
-      title, 
-      description, 
-      imageUrl, 
-      postDate,
-      category
-    });
-    setTitle('');
-    setDescription('');
-    setImageUrl('');
-    setPostDate('');
-    setCategory('');
+    
+    if (validateForm()) {
+      console.log({ title, description, imageUrl, postDate, category });
+      
+      toast.success('Post criado com sucesso!', {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      
+      setTitle('');
+      setDescription('');
+      setImageUrl('');
+      setPostDate('');
+      setCategory('');
+      setErrors({});
+    } else {
+      toast.error('Por favor, corrija os erros no formulário.', {
+        position: "top-right",
+        autoClose: 4000,
+      });
+    }
+  };
+
+  const getTodayDate = () => {
+    return new Date().toISOString().split('T')[0];
   };
 
   return (
     <div className="app">
       <header className="header">
         <h1>Painel de Gerenciamento</h1>
-        <p>Atualmente, você tem <strong>0 posts</strong> cadastrados</p>
+        <p>Atualmente, você tem <strong>14 posts</strong> cadastrados</p>
       </header>
 
       <main className="main-content">
         <h2>Novo Post</h2>
         
-        <form onSubmit={handleSubmit} className="post-form">
+        <form onSubmit={handleSubmit} className="post-form" noValidate>
           <div className="form-group">
-            <label htmlFor="title">Título</label>
+            <label htmlFor="title">Título *</label>
             <input
               type="text"
               id="title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (errors.title) setErrors({...errors, title: ''});
+              }}
               placeholder="Título do post"
-              required
+              className={errors.title ? 'error' : ''}
             />
+            {errors.title && <span className="error-message">{errors.title}</span>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Descrição</label>
+            <label htmlFor="description">Descrição *</label>
             <textarea
               id="description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                if (errors.description) setErrors({...errors, description: ''});
+              }}
               placeholder="Descrição do post"
               rows={5}
-              required
+              className={errors.description ? 'error' : ''}
             />
+            {errors.description && <span className="error-message">{errors.description}</span>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="category">Categoria</label>
+            <label htmlFor="category">Categoria *</label>
             <select
               id="category"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
+              onChange={(e) => {
+                setCategory(e.target.value);
+                if (errors.category) setErrors({...errors, category: ''});
+              }}
+              className={errors.category ? 'error' : ''}
             >
               <option value="">Selecione uma categoria</option>
               <option value="artigo">Artigo</option>
@@ -73,6 +127,7 @@ function App() {
               <option value="tutorial">Tutorial</option>
               <option value="entrevista">Entrevista</option>
             </select>
+            {errors.category && <span className="error-message">{errors.category}</span>}
           </div>
 
           <div className="form-group">
@@ -81,11 +136,16 @@ function App() {
               type="url"
               id="imageUrl"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+              onChange={(e) => {
+                setImageUrl(e.target.value);
+                if (errors.imageUrl) setErrors({...errors, imageUrl: ''});
+              }}
               placeholder="https://exemplo.com/imagem.jpg"
+              className={errors.imageUrl ? 'error' : ''}
             />
+            {errors.imageUrl && <span className="error-message">{errors.imageUrl}</span>}
             
-            {imageUrl && (
+            {imageUrl && !errors.imageUrl && (
               <div className="image-preview">
                 <p>Pré-visualização:</p>
                 <img src={imageUrl} alt="Pré-visualização" onError={(e) => {
@@ -96,14 +156,19 @@ function App() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="postDate">Data do Post</label>
+            <label htmlFor="postDate">Data de Publicação *</label>
             <input
               type="date"
               id="postDate"
               value={postDate}
-              onChange={(e) => setPostDate(e.target.value)}
-              required
+              onChange={(e) => {
+                setPostDate(e.target.value);
+                if (errors.postDate) setErrors({...errors, postDate: ''});
+              }}
+              min={getTodayDate()}
+              className={errors.postDate ? 'error' : ''}
             />
+            {errors.postDate && <span className="error-message">{errors.postDate}</span>}
           </div>
 
           <button type="submit" className="submit-button">
@@ -111,6 +176,8 @@ function App() {
           </button>
         </form>
       </main>
+
+      <ToastContainer />
     </div>
   );
 }
