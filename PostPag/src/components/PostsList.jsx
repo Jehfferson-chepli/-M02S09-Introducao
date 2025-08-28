@@ -10,7 +10,8 @@ function PostsList() {
       try {
         const storedPosts = localStorage.getItem('posts');
         if (storedPosts) {
-          setPosts(JSON.parse(storedPosts));
+          const parsedPosts = JSON.parse(storedPosts);
+          setPosts(parsedPosts);
         }
       } catch (error) {
         console.error('Erro ao carregar posts:', error);
@@ -18,12 +19,18 @@ function PostsList() {
     };
 
     loadPosts();
+
     window.addEventListener('storage', loadPosts);
     
     return () => {
       window.removeEventListener('storage', loadPosts);
     };
   }, []);
+
+  const formatDate = (dateString) => {
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString('pt-BR', options);
+  };
 
   if (posts.length === 0) {
     return (
@@ -42,7 +49,11 @@ function PostsList() {
         {posts.map((post) => (
           <Post 
             key={post.id} 
-            post={post} 
+            tipo={post.tipo}
+            titulo={post.titulo}
+            descricao={post.descricao}
+            data={formatDate(post.data)}
+            capa={post.capa}
           />
         ))}
       </div>

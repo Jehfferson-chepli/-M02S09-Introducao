@@ -1,17 +1,12 @@
 import './Post.css';
 
-function Post({ post }) {
-  const formatDate = (dateString) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('pt-BR', options);
-  };
-
+function Post({ tipo, titulo, descricao, data, capa }) {
   return (
     <div className="post-card">
       <div className="post-image">
         <img 
-          src={post.capa} 
-          alt={post.titulo}
+          src={capa} 
+          alt={titulo}
           onError={(e) => {
             e.target.style.display = 'none';
             e.target.nextSibling.style.display = 'flex';
@@ -23,14 +18,14 @@ function Post({ post }) {
       </div>
       
       <div className="post-content">
-        <span className="post-category">{post.tipo?.toUpperCase()}</span>
+        <span className="post-category">{tipo?.toUpperCase()}</span>
         
-        <h3 className="post-title">{post.titulo}</h3>
+        <h3 className="post-title">{titulo}</h3>
         
-        <p className="post-description">{post.descricao}</p>
+        <p className="post-description">{descricao}</p>
         
         <div className="post-footer">
-          <span className="post-date">Publicado em: {formatDate(post.data)}</span>
+          <span className="post-date">Publicado em: {data}</span>
         </div>
       </div>
     </div>
