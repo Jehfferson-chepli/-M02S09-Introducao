@@ -5,15 +5,20 @@ function App() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [postDate, setPostDate] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    console.log({ title, description, imageUrl });
-    
+    console.log({ 
+      title, 
+      description, 
+      imageUrl, 
+      postDate 
+    });
     setTitle('');
     setDescription('');
     setImageUrl('');
+    setPostDate('');
   };
 
   return (
@@ -59,6 +64,26 @@ function App() {
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://exemplo.com/imagem.jpg"
+            />
+            
+            {imageUrl && (
+              <div className="image-preview">
+                <p>Pré-visualização:</p>
+                <img src={imageUrl} alt="Pré-visualização" onError={(e) => {
+                  e.target.style.display = 'none';
+                }} />
+              </div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="postDate">Data do Post</label>
+            <input
+              type="date"
+              id="postDate"
+              value={postDate}
+              onChange={(e) => setPostDate(e.target.value)}
+              required
             />
           </div>
 
