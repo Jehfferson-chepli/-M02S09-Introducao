@@ -5,6 +5,7 @@ import './PostsList.css';
 function PostsList() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categoryCounts, setCategoryCounts] = useState({});
 
   useEffect(() => {
     const loadPostsFromStorage = () => {
@@ -14,12 +15,22 @@ function PostsList() {
         if (storedPosts) {
           const parsedPosts = JSON.parse(storedPosts);
           setPosts(parsedPosts);
+          
+          const counts = parsedPosts.reduce((acc, post) => {
+            const category = post.tipo || 'Sem categoria';
+            acc[category] = (acc[category] || 0) + 1;
+            return acc;
+          }, {});
+          
+          setCategoryCounts(counts);
         } else {
           setPosts([]);
+          setCategoryCounts({});
         }
       } catch (error) {
         console.error('Erro ao carregar posts:', error);
         setPosts([]);
+        setCategoryCounts({});
         alert('❌ Erro ao carregar posts');
       } finally {
         setLoading(false);
@@ -48,6 +59,14 @@ function PostsList() {
       localStorage.setItem('posts', JSON.stringify(updatedPosts));
       
       setPosts(updatedPosts);
+      
+      const counts = updatedPosts.reduce((acc, post) => {
+        const category = post.tipo || 'Sem categoria';
+        acc[category] = (acc[category] || 0) + 1;
+        return acc;
+      }, {});
+      
+      setCategoryCounts(counts);
       
       alert('✅ Post excluído com sucesso!');
       
@@ -94,6 +113,19 @@ function PostsList() {
   return (
     <div className="posts-list-container">
       <h2>Lista de Posts ({posts.length})</h2>
+      
+      {/* Contagem por Categoria */}
+      <div className="category-stats">
+        <h3>Posts por Categoria</h3>
+        <div className="category-cards">
+          {Object.entries(categoryCounts).map(([category, count]) => (
+            <div key={category} className="category-card">
+              <span className="category-name">{category}</span>
+              <span className="category-count">{count}</span>
+            </div>
+          ))}
+        </div>
+      </div>
       
       <div className="posts-list">
         {posts.map((post) => (
