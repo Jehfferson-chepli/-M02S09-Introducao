@@ -11,11 +11,27 @@
   font-size: 28px;
 }
 
+.loading {
+  text-align: center;
+  color: #3498db;
+  font-size: 18px;
+  margin-top: 50px;
+  font-style: italic;
+}
+
 .no-posts {
   text-align: center;
   color: #7f8c8d;
   font-size: 18px;
   margin-top: 50px;
+  margin-bottom: 10px;
+}
+
+.no-posts-hint {
+  text-align: center;
+  color: #95a5a6;
+  font-size: 14px;
+  font-style: italic;
 }
 
 .posts-list {

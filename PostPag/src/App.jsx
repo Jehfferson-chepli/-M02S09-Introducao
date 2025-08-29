@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
@@ -10,19 +8,12 @@ function App() {
   const [postDate, setPostDate] = useState('');
   const [category, setCategory] = useState('');
   const [errors, setErrors] = useState({});
-  const [totalPosts, setTotalPosts] = useState(0);
-
-  useEffect(() => {
-    const posts = getPostsFromStorage();
-    setTotalPosts(posts.length);
-  }, []);
 
   const getPostsFromStorage = () => {
     try {
-      const posts = localStorage.getItem('blogPosts');
+      const posts = localStorage.getItem('posts');
       return posts ? JSON.parse(posts) : [];
-    } catch (error) {
-      console.error('Erro ao ler posts do localStorage:', error);
+    } catch {
       return [];
     }
   };
@@ -31,13 +22,9 @@ function App() {
     try {
       const currentPosts = getPostsFromStorage();
       const updatedPosts = [...currentPosts, newPost];
-      localStorage.setItem('blogPosts', JSON.stringify(updatedPosts));
-      
-      setTotalPosts(updatedPosts.length);
-      
+      localStorage.setItem('posts', JSON.stringify(updatedPosts));
       return true;
-    } catch (error) {
-      console.error('Erro ao salvar post no localStorage:', error);
+    } catch {
       return false;
     }
   };
@@ -75,39 +62,29 @@ function App() {
     if (validateForm()) {
       const newPost = {
         id: Date.now(),
-        title: title.trim(),
-        description: description.trim(),
-        imageUrl: imageUrl.trim(),
-        postDate,
-        category,
-        createdAt: new Date().toISOString()
+        titulo: title.trim(),
+        descricao: description.trim(),
+        capa: imageUrl.trim(),
+        data: postDate,
+        tipo: category
       };
       
       const saved = savePostToStorage(newPost);
       
       if (saved) {
-        toast.success('Post criado com sucesso!', {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        
+        alert('✅ Post criado com sucesso!');
         setTitle('');
         setDescription('');
         setImageUrl('');
         setPostDate('');
         setCategory('');
         setErrors({});
+        window.location.reload();
       } else {
-        toast.error('Erro ao salvar o post. Tente novamente.', {
-          position: "top-right",
-          autoClose: 4000,
-        });
+        alert('❌ Erro ao salvar o post. Tente novamente.');
       }
     } else {
-      toast.error('Por favor, corrija os erros no formulário.', {
-        position: "top-right",
-        autoClose: 4000,
-      });
+      alert('⚠️ Por favor, corrija os erros no formulário.');
     }
   };
 
@@ -119,7 +96,7 @@ function App() {
     <div className="app">
       <header className="header">
         <h1>Painel de Gerenciamento</h1>
-        <p>Atualmente, você tem <strong>{totalPosts} posts</strong> cadastrados</p>
+        <p>Atualmente, você tem <strong>{getPostsFromStorage().length} posts</strong> cadastrados</p>
       </header>
 
       <main className="main-content">
@@ -132,10 +109,7 @@ function App() {
               type="text"
               id="title"
               value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                if (errors.title) setErrors({...errors, title: ''});
-              }}
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="Título do post"
               className={errors.title ? 'error' : ''}
             />
@@ -147,10 +121,7 @@ function App() {
             <textarea
               id="description"
               value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-                if (errors.description) setErrors({...errors, description: ''});
-              }}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Descrição do post"
               rows={5}
               className={errors.description ? 'error' : ''}
@@ -163,17 +134,14 @@ function App() {
             <select
               id="category"
               value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-                if (errors.category) setErrors({...errors, category: ''});
-              }}
+              onChange={(e) => setCategory(e.target.value)}
               className={errors.category ? 'error' : ''}
             >
               <option value="">Selecione uma categoria</option>
-              <option value="artigo">Artigo</option>
-              <option value="noticia">Notícia</option>
-              <option value="tutorial">Tutorial</option>
-              <option value="entrevista">Entrevista</option>
+              <option value="Artigo">Artigo</option>
+              <option value="Notícia">Notícia</option>
+              <option value="Tutorial">Tutorial</option>
+              <option value="Entrevista">Entrevista</option>
             </select>
             {errors.category && <span className="error-message">{errors.category}</span>}
           </div>
@@ -184,23 +152,11 @@ function App() {
               type="url"
               id="imageUrl"
               value={imageUrl}
-              onChange={(e) => {
-                setImageUrl(e.target.value);
-                if (errors.imageUrl) setErrors({...errors, imageUrl: ''});
-              }}
+              onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://exemplo.com/imagem.jpg"
               className={errors.imageUrl ? 'error' : ''}
             />
             {errors.imageUrl && <span className="error-message">{errors.imageUrl}</span>}
-            
-            {imageUrl && !errors.imageUrl && (
-              <div className="image-preview">
-                <p>Pré-visualização:</p>
-                <img src={imageUrl} alt="Pré-visualização" onError={(e) => {
-                  e.target.style.display = 'none';
-                }} />
-              </div>
-            )}
           </div>
 
           <div className="form-group">
@@ -209,10 +165,7 @@ function App() {
               type="date"
               id="postDate"
               value={postDate}
-              onChange={(e) => {
-                setPostDate(e.target.value);
-                if (errors.postDate) setErrors({...errors, postDate: ''});
-              }}
+              onChange={(e) => setPostDate(e.target.value)}
               min={getTodayDate()}
               className={errors.postDate ? 'error' : ''}
             />
@@ -224,8 +177,6 @@ function App() {
           </button>
         </form>
       </main>
-
-      <ToastContainer />
     </div>
   );
 }
