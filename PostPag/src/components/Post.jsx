@@ -1,6 +1,12 @@
 import './Post.css';
 
-function Post({ tipo, titulo, descricao, data, capa }) {
+function Post({ tipo, titulo, descricao, data, capa, id, onDelete }) {
+  const handleDeleteClick = () => {
+    if (window.confirm('Tem certeza que deseja excluir este post?')) {
+      onDelete(id);
+    }
+  };
+
   return (
     <div className="post-card">
       <div className="post-image">
@@ -18,7 +24,16 @@ function Post({ tipo, titulo, descricao, data, capa }) {
       </div>
       
       <div className="post-content">
-        <span className="post-category">{tipo?.toUpperCase()}</span>
+        <div className="post-header">
+          <span className="post-category">{tipo?.toUpperCase()}</span>
+          <button 
+            className="delete-button"
+            onClick={handleDeleteClick}
+            aria-label="Excluir post"
+          >
+            Excluir
+          </button>
+        </div>
         
         <h3 className="post-title">{titulo}</h3>
         

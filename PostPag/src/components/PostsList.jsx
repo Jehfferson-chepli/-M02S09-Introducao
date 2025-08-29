@@ -31,7 +31,6 @@ function PostsList() {
     const handleStorageChange = (event) => {
       if (event.key === 'posts') {
         loadPostsFromStorage();
-        alert('📋 Lista de posts atualizada!');
       }
     };
 
@@ -41,6 +40,22 @@ function PostsList() {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
+  const handleDelete = (postId) => {
+    try {
+      const updatedPosts = posts.filter(post => post.id !== postId);
+      
+      localStorage.setItem('posts', JSON.stringify(updatedPosts));
+      
+      setPosts(updatedPosts);
+      
+      alert('✅ Post excluído com sucesso!');
+      
+    } catch (error) {
+      console.error('Erro ao excluir post:', error);
+      alert('❌ Erro ao excluir post. Tente novamente.');
+    }
+  };
 
   const formatDate = (dateString) => {
     try {
@@ -52,21 +67,6 @@ function PostsList() {
     } catch (error) {
       console.error('Erro ao formatar data:', error);
       return dateString;
-    }
-  };
-
-  const handleDeletePost = (postId) => {
-    try {
-      const updatedPosts = posts.filter(post => post.id !== postId);
-      localStorage.setItem('posts', JSON.stringify(updatedPosts));
-      setPosts(updatedPosts);
-      
-      alert('✅ Post excluído com sucesso!');
-      window.dispatchEvent(new Event('storage'));
-      
-    } catch (error) {
-      console.error('Erro ao excluir post:', error);
-      alert('❌ Erro ao excluir post. Tente novamente.');
     }
   };
 
@@ -99,12 +99,13 @@ function PostsList() {
         {posts.map((post) => (
           <Post 
             key={post.id} 
+            id={post.id}
             tipo={post.tipo}
             titulo={post.titulo}
             descricao={post.descricao}
             data={formatDate(post.data)}
             capa={post.capa}
-            onDelete={handleDeletePost}
+            onDelete={handleDelete}
           />
         ))}
       </div>

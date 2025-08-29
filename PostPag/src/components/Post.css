@@ -8,6 +8,11 @@
   display: flex;
   gap: 20px;
   align-items: flex-start;
+  transition: box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .post-image {
@@ -44,6 +49,14 @@
   flex-direction: column;
 }
 
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
 .post-category {
   background: #3498db;
   color: white;
@@ -53,8 +66,24 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  align-self: flex-start;
-  margin-bottom: 15px;
+}
+
+.delete-button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.delete-button:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
 }
 
 .post-title {
@@ -97,21 +126,12 @@
     height: 200px;
   }
   
-  .post-category {
-    margin-bottom: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .post-image {
-    height: 150px;
+  .post-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
   
-  .post-title {
-    font-size: 16px;
-  }
-  
-  .post-description {
-    font-size: 13px;
+  .delete-button {
+    align-self: flex-end;
   }
 }
